@@ -4,6 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <DocumentationFile>C:\Users\marie\source\repos\CryptoWallet\CyptoWallet\bin\Debug\net6.0\CyptoWallet.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,15 +19,6 @@
 	  </PackageReference>
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="DataAccess\Repositories\" />
-    <Folder Include="Entities\" />
-    <Folder Include="Helper\" />
-    <Folder Include="Infraestructure\" />
-    <Folder Include="DTOs\" />
   </ItemGroup>
 
 </Project>
