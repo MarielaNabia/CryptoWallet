@@ -59,6 +59,8 @@ namespace CyptoWallet.Entities
         [ForeignKey("RoleId")]
         public Role? Role { get; set; }
 
+        public List<Account> Accounts { get; set; }
+        public List<Operation> Operations { get; set; }
     }
 }
 

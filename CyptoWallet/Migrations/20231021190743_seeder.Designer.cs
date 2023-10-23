@@ -4,6 +4,7 @@ using CyptoWallet.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CyptoWallet.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231021190743_seeder")]
+    partial class seeder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,7 +62,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("CyptoWallet.Entities.AccountType", b =>
@@ -77,7 +79,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasKey("AccountTypeId");
 
-                    b.ToTable("AccountType", (string)null);
+                    b.ToTable("AccountType");
 
                     b.HasData(
                         new
@@ -133,7 +135,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Operations", (string)null);
+                    b.ToTable("Operations");
                 });
 
             modelBuilder.Entity("CyptoWallet.Entities.OperationType", b =>
@@ -151,7 +153,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasKey("OperationTypeId");
 
-                    b.ToTable("OperationType", (string)null);
+                    b.ToTable("OperationType");
 
                     b.HasData(
                         new
@@ -197,7 +199,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasKey("RoleId");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
@@ -258,7 +260,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
