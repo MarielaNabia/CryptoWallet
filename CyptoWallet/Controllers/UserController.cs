@@ -22,7 +22,7 @@ namespace CyptoWallet.Controllers
         ///  Devuelve todo los usuarios
         /// </summary>
         /// <returns>retorna todos los usuarios</returns>
-        [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "AdminConsultor")]
         [HttpGet]
         [Route("GetAll")]
         public async Task<IActionResult> GetAll()
@@ -53,7 +53,7 @@ namespace CyptoWallet.Controllers
         /// </summary>
         /// <param name="id">El ID del usuario a obtener.</param>
         /// <returns>El usuario encontrado.</returns>
-        [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "AdminConsultor")]
         [HttpGet("GetById/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -73,7 +73,7 @@ namespace CyptoWallet.Controllers
         /// <param name="dto"></param>
         /// <returns>devuelve un usuario registrado con un statusCode 201</returns>
 
-        [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "AdminConsultor")]
         [HttpPost]
         [Route("Alta")]
         public async Task<IActionResult> Register(RegisterDto dto)
@@ -84,6 +84,20 @@ namespace CyptoWallet.Controllers
             await _unitOfWork.UserRepository.CreateAsync(user);
             await _unitOfWork.Complete();
 
+            // Crear cuentas para el usuario
+            var userId = user.UserId; // Obtén el ID del usuario recién registrado
+
+            // Crear cuentas con valores predeterminados
+            var accountPesos = CreateAccount(userId, 1, "Pesos");
+            var accountUSD = CreateAccount(userId, 2, "USD");
+            var accountBTC = CreateAccount(userId, 3, "BTC");
+
+            // Almacenar las cuentas en la base de datos
+            await _unitOfWork.AccountRepository.CreateAsync(accountPesos);
+            await _unitOfWork.AccountRepository.CreateAsync(accountUSD);
+            await _unitOfWork.AccountRepository.CreateAsync(accountBTC);
+            await _unitOfWork.Complete();
+
             return ResponseFactory.CreateSuccessResponse(201, "Usuario registrado con exito!");
         }
 
@@ -91,7 +105,7 @@ namespace CyptoWallet.Controllers
         ///  Actualiza el usuario
         /// </summary>
         /// <returns>actualizado o un 500</returns>
-        [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "AdminConsultor")]
         [HttpPut("Modificar/{id}")]
         public async Task<IActionResult> Update([FromRoute] int id, RegisterDto dto)
         {
@@ -114,7 +128,7 @@ namespace CyptoWallet.Controllers
         ///  Elimina el usuario
         /// </summary>
         /// <returns>Eliminado o un 500</returns>
-        [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "AdminConsultor")]
         [HttpPut("Baja/{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
@@ -129,6 +143,22 @@ namespace CyptoWallet.Controllers
                 await _unitOfWork.Complete();
                 return ResponseFactory.CreateSuccessResponse(200, "Eliminado");
             }
+        }
+
+        private Account CreateAccount(int userId, int accountTypeId, string currency)
+        {
+            string cbuValue = accountTypeId == 3 ? "NoCorresponde" : $"CBU{currency}";
+            string aliasValue = accountTypeId == 3 ? "NoCorresponde" : $"Alias{currency}";
+
+            return new Account
+            {
+                Balance = 0.0m, // Saldo inicial
+                CBU = cbuValue, // Valor predeterminado para CBU
+                Alias = aliasValue, // Valor predeterminado para Alias
+                CryptoAddress = $"CryptoAddress{currency}", // Valor predeterminado para CryptoAddress
+                AccountTypeId = accountTypeId, // Asigna el AccountTypeId
+                UserId = userId, // Asigna el UserId del usuario recién registrado
+            };
         }
     }
 }

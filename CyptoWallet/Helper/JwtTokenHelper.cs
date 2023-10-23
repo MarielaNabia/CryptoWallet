@@ -20,10 +20,10 @@ namespace CyptoWallet.Helper
             {
                 var claims = new[]
                {
+                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Sub, _configuration["AppSettings:Subject"]),
-                //new Claim(ClaimTypes.Name, user.Nombre.ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Email.ToString()),
-                new Claim(ClaimTypes.Role, user.RoleId.ToString())
+                new Claim(ClaimTypes.Name, user.Nombre.ToString()),               
+                new Claim(ClaimTypes.Role, user.RoleId.ToString())             
                };
 
                 var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.

@@ -6,6 +6,9 @@ namespace CyptoWallet.Services
     {
         public UserRepository UserRepository { get; }
         public RoleRepository RoleRepository { get; }
+        public AccountRepository AccountRepository { get; }
+        public OperationRepository OperationRepository { get; }
+
         Task<int> Complete();
     }
 }

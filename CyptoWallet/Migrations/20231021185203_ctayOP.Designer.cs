@@ -4,6 +4,7 @@ using CyptoWallet.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CyptoWallet.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231021185203_ctayOP")]
+    partial class ctayOP
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,7 +62,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("CyptoWallet.Entities.AccountType", b =>
@@ -77,24 +79,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasKey("AccountTypeId");
 
-                    b.ToTable("AccountType", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            AccountTypeId = 1,
-                            Name = "Pesos"
-                        },
-                        new
-                        {
-                            AccountTypeId = 2,
-                            Name = "Dólares"
-                        },
-                        new
-                        {
-                            AccountTypeId = 3,
-                            Name = "BTC"
-                        });
+                    b.ToTable("AccountType");
                 });
 
             modelBuilder.Entity("CyptoWallet.Entities.Operation", b =>
@@ -133,7 +118,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Operations", (string)null);
+                    b.ToTable("Operations");
                 });
 
             modelBuilder.Entity("CyptoWallet.Entities.OperationType", b =>
@@ -151,29 +136,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasKey("OperationTypeId");
 
-                    b.ToTable("OperationType", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            OperationTypeId = 1,
-                            Name = "Transferencia"
-                        },
-                        new
-                        {
-                            OperationTypeId = 2,
-                            Name = "Compra"
-                        },
-                        new
-                        {
-                            OperationTypeId = 3,
-                            Name = "Depósito"
-                        },
-                        new
-                        {
-                            OperationTypeId = 4,
-                            Name = "Venta"
-                        });
+                    b.ToTable("OperationType");
                 });
 
             modelBuilder.Entity("CyptoWallet.Entities.Role", b =>
@@ -197,7 +160,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasKey("RoleId");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
@@ -258,7 +221,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
