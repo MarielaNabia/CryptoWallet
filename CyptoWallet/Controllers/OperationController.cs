@@ -4,11 +4,13 @@ using CyptoWallet.DataAccess.Repositories.Interfaces;
 using CyptoWallet.DTOs;
 using CyptoWallet.Entities;
 using CyptoWallet.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace CyptoWallet.Controllers
 {
+    [Authorize(Policy = "AdminConsultor")]
     [Route("[controller]")]
     [ApiController]
     public class OperationController : ControllerBase
@@ -40,12 +42,13 @@ namespace CyptoWallet.Controllers
             return Ok(operation);
         }
 
+
         /// <summary>
         /// Obtiene el historial de operaciones para una cuenta específica.
         /// </summary>
-        /// <param name="id">El identificador de la cuenta.</param>
+        /// <param name="UserId">El identificador de la cuenta.</param>
         /// <returns>Historial de operaciones en una respuesta HTTP.</returns>
-        [HttpGet("{id}/history")]
+        [HttpGet("historyCuentas")]
         public async Task<IActionResult> GetOperationHistory(int id)
         {
             var operations = await _unitOfWork.OperationRepository.GetOperationsByUserIdAsync(id);
@@ -57,7 +60,8 @@ namespace CyptoWallet.Controllers
                 Amount = operation.Amount,
                 SourceAccountName = operation.SourceAccount.Alias, // Cambia .Name a .Alias
                 DestinationAccountName = operation.DestinationAccount?.Alias, // Cambia .Name a .Alias
-                OperationType = operation.OperationType.Name
+                OperationType = operation.OperationType.Name,
+               
             }).ToList();
 
             return Ok(operationDtos);
@@ -177,7 +181,7 @@ namespace CyptoWallet.Controllers
 
                 await _unitOfWork.OperationRepository.CreateAsync(transferOperation);
 
-                return Ok("Transferencia exitosa");
+                return Ok(new { message = "Transferencia exitosa" });
             }
             catch (Exception ex)
             {               
@@ -245,14 +249,13 @@ namespace CyptoWallet.Controllers
                 // Realiza la operación de compra de Bitcoin y registra la transacción.
                 dollarAccount.Balance -= amountInDollars;
                 btcAccount.Balance += bitcoinAmount;
-
-                ////*
+               
                 // Actualiza las cuentas en la base de datos.
                 await _unitOfWork.AccountRepository.UpdateAsync(dollarAccount);
                 await _unitOfWork.AccountRepository.UpdateAsync(btcAccount);
 
                 // Registra la operación de transferencia.
-                // Busca el tipo de operación "Compra" en la base de datos (ajusta esto según tu estructura de repositorio).
+                // Busca el tipo de operación "Compra" en la base de datos 
                 var purchaseOperationType = await _unitOfWork.OperationRepository.GetOperationTypeByNameAsync(OperationType.Types.Compra);
                 if (purchaseOperationType == null)
                 {
@@ -269,14 +272,28 @@ namespace CyptoWallet.Controllers
                     DestinationAccountId = btcAccount.AccountId,
                     UserId = userId
                 };
+                // Registra la operación de compra con el tipo de operación obtenido de la base de datos.
+                var purchaseOperation1 = new Operation
+                {
+                    Timestamp = DateTime.UtcNow,
+                    Amount = +bitcoinAmount, // Amount in dollars spent for Bitcoin
+                    OperationType = purchaseOperationType,
+                    SourceAccountId = dollarAccount.AccountId,
+                    DestinationAccountId = btcAccount.AccountId,
+                    UserId = userId
+                };
 
                 await _unitOfWork.OperationRepository.CreateAsync(purchaseOperation);
+                await _unitOfWork.OperationRepository.CreateAsync(purchaseOperation1);
 
                 // Actualiza las cuentas en la base de datos.
                 await _unitOfWork.AccountRepository.UpdateAsync(dollarAccount);
                 await _unitOfWork.AccountRepository.UpdateAsync(btcAccount);
-
-                return Ok($"Has comprado {bitcoinAmount} BTC.");
+                return Ok(new
+                {
+                    message = $"Has comprado {bitcoinAmount} BTC."
+                });
+                //return Ok($"Has comprado {bitcoinAmount} BTC.");
             }
             catch (Exception ex)
             {
@@ -331,7 +348,7 @@ namespace CyptoWallet.Controllers
                     return BadRequest("Saldo insuficiente en la cuenta de Bitcoin.");
                 }
 
-                // Obtén la cotización de Bitcoin.
+                // cotización de Bitcoin.
                 var bitcoinInfo = await _criptoApiClient.GetCryptocurrencyInfo("1"); // Ajusta el parámetro según tu API
 
                 if (bitcoinInfo == null)
@@ -368,10 +385,24 @@ namespace CyptoWallet.Controllers
                     DestinationAccountId = dollarAccount.AccountId,
                     UserId = userId
                 };
+                var sellOperation1 = new Operation
+                {
+                    Timestamp = DateTime.UtcNow,
+                    Amount = +amountInDollars, // Amount in dollars received for Bitcoin
+                    OperationType = sellOperationType,
+                    SourceAccountId = btcAccount.AccountId,
+                    DestinationAccountId = dollarAccount.AccountId,
+                    UserId = userId
+                };
 
                 await _unitOfWork.OperationRepository.CreateAsync(sellOperation);
+                await _unitOfWork.OperationRepository.CreateAsync(sellOperation1);
 
-                return Ok($"Has vendido {bitcoinAmount} BTC por {amountInDollars} dólares.");
+                return Ok(new
+                {
+                    message = $"Has vendido {bitcoinAmount} BTC por {amountInDollars} dólares."
+                });
+                //return Ok($"Has vendido {bitcoinAmount} BTC por {amountInDollars} dólares.");
             }
             catch (Exception ex)
             {

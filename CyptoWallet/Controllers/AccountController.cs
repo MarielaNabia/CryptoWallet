@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 using System.Security.Claims;
+using System.Security.Principal;
 
 namespace CyptoWallet.Controllers
 {
@@ -22,20 +23,43 @@ namespace CyptoWallet.Controllers
         }
 
         /// <summary>
-        /// Obtiene una cuenta por su ID.
+        /// Obtiene una cuenta por el tipo de cuenta asociada a un usuario.
         /// </summary>
-        /// <param name="id">ID de la cuenta.</param>
-        /// <returns>Detalles de la cuenta.</returns>
+        /// <param name="accountType">El tipo de cuenta a consultar.</param>
+        /// <returns>Detalles de la cuenta si se encuentra, de lo contrario, devuelve un código de estado correspondiente.</returns>
         [Authorize(Policy = "AdminConsultor")]       
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetAccount(int id)
+        [HttpGet("AccountXUser")]
+        public async Task<IActionResult> GetAccount(int accountType)
         {
-            var account = await _unitOfWork.AccountRepository.GetByIdAsync(id);
-            if (account == null)
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
             {
-                return NotFound();
+                return Unauthorized(); // El usuario no está autenticado o el token es inválido
             }
-            return Ok(account);
+
+            // cuentas asociadas al usuario.
+            var userAccounts = await _unitOfWork.AccountRepository.GetAccountsByUserIdAsync(userId);
+
+            if (userAccounts == null || !userAccounts.Any())
+            {
+                return NotFound("No se encontraron cuentas para este usuario.");
+            }
+
+            // Busca la cuenta especificada por el usuario (accountType)
+            var selectedAccount = userAccounts.FirstOrDefault(account => account.AccountTypeId == accountType);
+
+            if (selectedAccount == null)
+            {
+                return BadRequest($"No se encontró una cuenta de tipo {accountType} para este usuario.");
+            }
+            return Ok(selectedAccount);
+            //var account = await _unitOfWork.AccountRepository.GetByIdAsync(id);
+            //if (account == null)
+            //{
+            //    return NotFound();
+            //}
+            //return Ok(account);
         }
 
         /// <summary>
@@ -89,7 +113,7 @@ namespace CyptoWallet.Controllers
         /// <param name="identifier">Identificador de la cuenta (CBU, Alias o UUID).</param>
         /// <param name="amount">Monto a depositar.</param>
         /// <returns>Resultado del depósito.</returns>
-        [HttpPost("pesos-usd-btc")]
+        [HttpPost("Deposit")]
         public async Task<IActionResult> DepositAsync(string identifier, decimal amount)
         {
             var account = await _unitOfWork.AccountRepository.GetAccountByIdentifierAsync(identifier);
@@ -109,7 +133,12 @@ namespace CyptoWallet.Controllers
             account.Balance += amount;
             await _unitOfWork.AccountRepository.UpdateAsync(account);
 
-            return Ok($"Su depósito de {amount}, a la cuenta {identifier} se realizó con éxito.");
+            return Ok(new
+            {
+                message = $"Su depósito de {amount:C}, a la cuenta {identifier} se realizó con éxito."
+            });
+
+            //return Ok($"Su depósito de {amount}, a la cuenta {identifier} se realizó con éxito.");
         }
 
         /// <summary>
@@ -158,7 +187,9 @@ namespace CyptoWallet.Controllers
             selectedAccount.Balance -= amount;
             await _unitOfWork.AccountRepository.UpdateAsync(selectedAccount);
 
-            return Ok($"Retiro de {amount:C} en cuenta de tipo {accountType} realizado con éxito. Nuevo saldo: {selectedAccount.Balance:C}");
+            return Ok(new { message = $"Retiro de {amount:C} en cuenta de tipo {accountType} realizado con éxito. Nuevo saldo: {selectedAccount.Balance:C}" });
+
+            // return Ok($"Retiro de {amount:C} en cuenta de tipo {accountType} realizado con éxito. Nuevo saldo: {selectedAccount.Balance:C}");
         }
 
 

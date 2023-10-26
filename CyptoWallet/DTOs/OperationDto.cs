@@ -7,5 +7,6 @@
         public string SourceAccountName { get; set; }
         public string DestinationAccountName { get; set; }
         public string OperationType { get; set; }
+        public string AccountType { get; set; }
     }
 }

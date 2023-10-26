@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using CyptoWallet.ApiClient;
 using CyptoWallet.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CyptoWallet.Controllers
@@ -26,6 +27,7 @@ namespace CyptoWallet.Controllers
         /// un mensaje de "No se encontraron datos para la casa de cambio especificada" si no se encuentra información,
         /// o un mensaje de error en caso de excepción.
         /// </returns>
+        [Authorize(Policy = "AdminConsultor")]
         [HttpGet("get-dolar-data/{casa}")]
         public async Task<IActionResult> GetDolarDataByCasa(string casa)
         {

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CyptoWallet.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CyptoWallet.Controllers
@@ -24,6 +25,7 @@ namespace CyptoWallet.Controllers
         /// un mensaje de "No se encontraron datos para la criptomoneda" si no se encuentra información,
         /// o un mensaje de error en caso de excepción.
         /// </returns>
+        [Authorize(Policy = "AdminConsultor")]   
         [HttpGet("get-cryptocurrency/{cryptocurrencyId}")]
         public async Task<IActionResult> GetCryptocurrencyInfo(string cryptocurrencyId)
         {

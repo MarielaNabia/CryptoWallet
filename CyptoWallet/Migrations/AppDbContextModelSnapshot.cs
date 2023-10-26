@@ -60,7 +60,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("CyptoWallet.Entities.AccountType", b =>
@@ -77,7 +77,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasKey("AccountTypeId");
 
-                    b.ToTable("AccountType", (string)null);
+                    b.ToTable("AccountType");
 
                     b.HasData(
                         new
@@ -88,7 +88,7 @@ namespace CyptoWallet.Migrations
                         new
                         {
                             AccountTypeId = 2,
-                            Name = "Dólares"
+                            Name = "Dolares"
                         },
                         new
                         {
@@ -133,7 +133,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Operations", (string)null);
+                    b.ToTable("Operations");
                 });
 
             modelBuilder.Entity("CyptoWallet.Entities.OperationType", b =>
@@ -151,7 +151,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasKey("OperationTypeId");
 
-                    b.ToTable("OperationType", (string)null);
+                    b.ToTable("OperationType");
 
                     b.HasData(
                         new
@@ -197,7 +197,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasKey("RoleId");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
@@ -258,7 +258,7 @@ namespace CyptoWallet.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
@@ -267,10 +267,22 @@ namespace CyptoWallet.Migrations
                             Activo = true,
                             Apellido = "Marx",
                             DNI = 40123456,
-                            Email = "tecno@gmail.com",
+                            Email = "superadmin@gmail.com",
                             FechaBaja = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nombre = "Carlos",
-                            Password = "2073aeb3d12caffb41cfcee9a2e8bdb7c7ec1f9b67d57b06c554717526fa58d4",
+                            Password = "d39411142e8c095f7a4eebd838674fbab529e60c09a2a45540ff1727548899a9",
+                            RoleId = 1
+                        },
+                        new
+                        {
+                            UserId = 5,
+                            Activo = true,
+                            Apellido = "Dos",
+                            DNI = 30123456,
+                            Email = "usuario@gmail.com",
+                            FechaBaja = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nombre = "Usuario",
+                            Password = "6e341465da0423b3418a72751d5727d340b39a3df8b55ed3364743d996ebf59e",
                             RoleId = 1
                         });
                 });
