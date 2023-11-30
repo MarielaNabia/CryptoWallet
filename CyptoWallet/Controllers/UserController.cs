@@ -72,8 +72,7 @@ namespace CyptoWallet.Controllers
         /// </summary>
         /// <param name="dto"></param>
         /// <returns>devuelve un usuario registrado con un statusCode 201</returns>
-
-        [Authorize(Policy = "AdminConsultor")]
+      
         [HttpPost]
         [Route("Alta")]
         public async Task<IActionResult> Register(RegisterDto dto)
@@ -85,12 +84,12 @@ namespace CyptoWallet.Controllers
             await _unitOfWork.Complete();
 
             // Crear cuentas para el usuario
-            var userId = user.UserId; // Obtén el ID del usuario recién registrado
+            var userId = user.UserId; 
 
             // Crear cuentas con valores predeterminados
-            var accountPesos = CreateAccount(userId, 1, "Pesos");
-            var accountUSD = CreateAccount(userId, 2, "USD");
-            var accountBTC = CreateAccount(userId, 3, "BTC");
+            var accountPesos = await _unitOfWork.UserRepository.CreateAccount(userId, 1, "Pesos");
+            var accountUSD = await _unitOfWork.UserRepository.CreateAccount(userId, 2, "USD");
+            var accountBTC = await _unitOfWork.UserRepository.CreateAccount(userId, 3, "BTC");
 
             // Almacenar las cuentas en la base de datos
             await _unitOfWork.AccountRepository.CreateAsync(accountPesos);
@@ -145,20 +144,6 @@ namespace CyptoWallet.Controllers
             }
         }
 
-        private Account CreateAccount(int userId, int accountTypeId, string currency)
-        {
-            string cbuValue = accountTypeId == 3 ? "NoCorresponde" : $"CBU{currency}";
-            string aliasValue = accountTypeId == 3 ? "NoCorresponde" : $"Alias{currency}";
-
-            return new Account
-            {
-                Balance = 0.0m, // Saldo inicial
-                CBU = cbuValue, // Valor predeterminado para CBU
-                Alias = aliasValue, // Valor predeterminado para Alias
-                CryptoAddress = $"CryptoAddress{currency}", // Valor predeterminado para CryptoAddress
-                AccountTypeId = accountTypeId, // Asigna el AccountTypeId
-                UserId = userId, // Asigna el UserId del usuario recién registrado
-            };
-        }
+        
     }
 }

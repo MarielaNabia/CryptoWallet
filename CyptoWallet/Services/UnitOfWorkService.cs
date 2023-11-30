@@ -22,6 +22,7 @@ namespace CyptoWallet.Services
         AccountRepository = new AccountRepository(_context);
         OperationRepository = new OperationRepository(_context, cryptoService, dollarService);
         }
+
     public Task<int> Complete()
     {
         return _context.SaveChangesAsync();

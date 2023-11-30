@@ -8,10 +8,22 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var AllowSpecificOrigins = "";
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .WriteTo.File("C:\\Users\\marie\\source\\repos\\CryptoWallet\\Log\\log.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+try
+{
+    Log.Information("Starting up");
+
 
 builder.Services.AddCors(options =>
 {
@@ -131,3 +143,13 @@ app.UseCors(AllowSpecificOrigins);
 
 app.MapControllers();
 app.Run();
+ 
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application start-up failed");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

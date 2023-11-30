@@ -77,7 +77,7 @@ namespace CyptoWallet.Controllers
                 return Unauthorized(); // El usuario no está autenticado o el token es inválido
             }
 
-            // Ahora userId es un entero y puedes usarlo para buscar cuentas asociadas al usuario.
+            // cuentas asociadas al usuario.
             var userAccounts = await _unitOfWork.AccountRepository.GetAccountsByUserIdAsync(userId);
 
             if (userAccounts == null || !userAccounts.Any())

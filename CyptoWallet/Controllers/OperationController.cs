@@ -232,7 +232,11 @@ namespace CyptoWallet.Controllers
                 // Verifica que el saldo en dólares sea suficiente para la compra de Bitcoin.
                 if (dollarAccount.Balance < amountInDollars)
                 {
-                    return BadRequest("Saldo insuficiente en la cuenta en dólares.");
+                    // return BadRequest("Saldo insuficiente en la cuenta en dólares.");
+                    return Ok(new
+                    {
+                        message = "Saldo insuficiente en la cuenta en dólares."
+                    });
                 }
 
                 // Obtén la cotización de Bitcoin.
@@ -339,13 +343,22 @@ namespace CyptoWallet.Controllers
 
                 if (btcAccount == null)
                 {
-                    return BadRequest("No se encontró una cuenta de Bitcoin para este usuario.");
+                    //return BadRequest("No se encontró una cuenta de Bitcoin para este usuario.");
+                    return Ok(new
+                    {
+                        message = "No se encontró una cuenta de Bitcoin para este usuario."
+                    });
                 }
 
                 // Verifica que el saldo en Bitcoin sea suficiente para la venta.
                 if (btcAccount.Balance < bitcoinAmount)
                 {
-                    return BadRequest("Saldo insuficiente en la cuenta de Bitcoin.");
+                    //return BadRequest("Saldo insuficiente en la cuenta de Bitcoin.");
+                    return Ok(new
+                    {
+                        message = "Saldo insuficiente en la cuenta de Bitcoin."
+                    });
+
                 }
 
                 // cotización de Bitcoin.

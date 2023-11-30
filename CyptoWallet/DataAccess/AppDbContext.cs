@@ -41,11 +41,6 @@ namespace CyptoWallet.DataAccess
                 .HasForeignKey(o => o.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-
-            // Definir otras relaciones y configuraciones aquí si es necesario.
-
-
-
             var seeders = new List<IEntitySeeder>
             {
                 new UserSeeder(),

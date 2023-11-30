@@ -76,7 +76,7 @@ namespace CyptoWallet.ApiClient
         {         
             var allDollarQuotes = await GetAllDollarQuotes(casa);
 
-            // Busca la cotización específica por la casa ("bolsa" en este caso)
+           
             var bolsaDollarQuote = allDollarQuotes.FirstOrDefault(quote => quote.Casa == casa);
 
             return bolsaDollarQuote;

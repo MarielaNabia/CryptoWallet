@@ -53,7 +53,7 @@ namespace CyptoWallet.DataAccess.Repositories
         {        
 
             // Verifica el tipo de cuenta y busca la cuenta correspondiente
-            if (identifier.Length == 36) // UUID de cripto
+            if (identifier.Length == 32) // UUID de cripto
             {
                 return await _context.Accounts.SingleOrDefaultAsync(a => a.CryptoAddress == identifier );
             }

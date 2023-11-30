@@ -3,6 +3,7 @@ using CyptoWallet.Helper;
 using CyptoWallet.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace CyptoWallet.Controllers
 {
@@ -26,10 +27,18 @@ namespace CyptoWallet.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(AuthUserDto dto)
         {
-            var userCredentials = await _unitOfWork.UserRepository.AuthenticateCredentials(dto);
-            if (userCredentials is null) return Unauthorized("Las credenciales son incorrectas");
+            try
+            {
+                Log.Information("Intento de inicio de sesión para el usuario: {Email}", dto.Email);
 
-            var token = _jwtTokenHelper.CrearToken(userCredentials);
+                var userCredentials = await _unitOfWork.UserRepository.AuthenticateCredentials(dto);
+            if (userCredentials is null)
+                {
+                    Log.Warning("Intento de inicio de sesión fallido para el usuario: {Email}", dto.Email);
+                    return Unauthorized("Las credenciales son incorrectas");
+                }
+
+                var token = _jwtTokenHelper.CrearToken(userCredentials);
 
             var user = new UserLoginDto()
             {
@@ -37,9 +46,15 @@ namespace CyptoWallet.Controllers
                 Token = token
             };
 
+                Log.Information("Inicio de sesión exitoso para el usuario: {Email}", dto.Email);
+                return Ok(user);
 
-            return Ok(user);
-
+        }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error al procesar la solicitud de inicio de sesión");
+                return StatusCode(500, "Error interno del servidor");
+            }
         }
     }
 }

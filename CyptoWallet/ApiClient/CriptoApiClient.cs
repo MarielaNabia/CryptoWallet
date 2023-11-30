@@ -18,24 +18,24 @@ public class CriptoApiClient
         try
         {
             string baseUrl = _configuration["CoinMarketCapApi:BaseUrl"];
-            string apiKey = _configuration["CoinMarketCapApi:ApiKey"];
+            string apiKey = _configuration["CoinMarketCapApi:ApiKey"];     
 
             if (string.IsNullOrEmpty(baseUrl) || string.IsNullOrEmpty(apiKey))
             {
                 throw new InvalidOperationException("CoinMarketCap API configuration is missing.");
             }
 
-            // Construye la URL para la solicitud a la API de CoinMarketCap
+            //URL para la solicitud a la API de CoinMarketCap
             string apiUrl = $"{baseUrl}/cryptocurrency/info?id={cryptocurrencyId}";
 
-            // Agrega el encabezado de la clave de API
+            // la clave de API
             _httpClient.DefaultRequestHeaders.Add("X-CMC_PRO_API_KEY", apiKey);
 
             HttpResponseMessage response = await _httpClient.GetAsync(apiUrl);
 
             if (response.IsSuccessStatusCode)
             {
-                string cryptocurrencyData = await response.Content.ReadAsStringAsync();
+                string cryptocurrencyData = await response.Content.ReadAsStringAsync();//para leer como cadena de caracteres
 
                 if(cryptocurrencyId == "1") 
                 {
@@ -68,8 +68,8 @@ public class CriptoApiClient
         {
             var root = document.RootElement;
 
-            if (root.TryGetProperty("data", out var dataElement)
-               && dataElement.TryGetProperty("1", out var cryptoDataElement)) // Asegúrate de que "BTC" es la clave correcta en tu JSON
+            if (root.TryGetProperty("data", out var dataElement)//si el bloque tiene la prop data
+               && dataElement.TryGetProperty("1", out var cryptoDataElement)) // y si dentro de ella con clave 1 q es BTC
             {
                 var cryptoDto = new CryptoDto
                 {
@@ -77,15 +77,15 @@ public class CriptoApiClient
                     Symbol = cryptoDataElement.GetProperty("symbol").GetString(),
                     Logo = cryptoDataElement.GetProperty("logo").GetString(),                 
                 };
-                // Aquí procesa la información del precio de manera similar a como se hizo en el CriptoController.
+                
                 var description = cryptoDataElement.GetProperty("description").GetString();
-                var priceStartIndex = description.IndexOf("The last known price of");
-                var priceEndIndex = description.IndexOf("USD", priceStartIndex);
+                var priceStartIndex = description.IndexOf("The last known price of");//busco indices en la desc para ver donde comienza
+                var priceEndIndex = description.IndexOf("USD", priceStartIndex);//y donde termina
 
                 if (priceStartIndex >= 0 && priceEndIndex > priceStartIndex)
                 {
-                    var priceString = description.Substring(priceStartIndex, priceEndIndex - priceStartIndex);
-                    var priceParts = priceString.Split("is", StringSplitOptions.RemoveEmptyEntries);
+                    var priceString = description.Substring(priceStartIndex, priceEndIndex - priceStartIndex);//me quedo con la descripcion
+                    var priceParts = priceString.Split("is", StringSplitOptions.RemoveEmptyEntries);//divido el texto usando is
 
                     if (priceParts.Length >= 1)
                     {
@@ -125,7 +125,7 @@ public class CriptoApiClient
         {
             var root = document.RootElement;
 
-            if (root.TryGetProperty("data", out var dataElement)
+            if (root.TryGetProperty("data", out var dataElement) //si el bloque tiene la prop data
               && dataElement.TryGetProperty(cryptocurrencyId, out var cryptoDataElement)) 
             {
                 var cryptoDto = new CryptoDto
@@ -136,7 +136,7 @@ public class CriptoApiClient
                    
                 };
 
-                // Aquí procesa la información del precio de manera similar a como se hizo en el CriptoController.
+                
                 var description = cryptoDataElement.GetProperty("description").GetString();
                 var priceStartIndex = description.IndexOf("The last known price of");
                 var priceEndIndex = description.IndexOf("USD", priceStartIndex);
